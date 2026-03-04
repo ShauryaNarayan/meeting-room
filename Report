@@ -1,0 +1,38 @@
+1. Logic used for overlap detection:
+To detect overlapping bookings, I leveraged the fact that HTML <input type="time"> fields natively output time as a 24-hour string (e.g., "14:30"). In JavaScript, these 24-hour strings can be compared directly using standard comparison operators without needing complex date parsing.
+
+The logic first filters existing bookings to find those on the same date and for the same room. Then, it evaluates the time intervals using this specific condition:
+isOverlapping = (newStartTime < existingEndTime) && (newEndTime > existingStartTime)
+
+If this statement evaluates to true, it means the new booking cuts into an existing time slot, and the system blocks the submission.
+
+2. What parts were AI-generated:
+I built the React component structure, the state management (using useState), the UI layout, and the search functionality entirely on my own. I used AI specifically as a problem-solving assistant for the complex time logic. I prompted the AI to help me find the most efficient mathematical formula to detect overlapping time intervals and asked it to generate the small helper function (formatTo12Hour) to convert 24-hour time strings into human-readable 12-hour AM/PM formats for the UI.
+
+3. What you corrected from AI output:
+When I initially asked the AI for overlap detection, it suggested a highly complex solution that involved parsing the time strings into full JavaScript Date objects and comparing their epoch timestamps. I realized this was over-engineered and unnecessary for simple same-day scheduling. I corrected this by throwing out the Date object approach and relying solely on the string comparison method ("09:00" < "14:00"), which made the code much lighter and faster.
+
+4. What you improved beyond AI:
+I focused heavily on the user experience and the overall architecture:
+
+Professional Layout: I moved away from a basic top-to-bottom form and implemented a modern, two-column SaaS-style dashboard.
+
+Auto-Sorting: I added custom logic to ensure that whenever a new booking is submitted, the schedule array automatically sorts itself chronologically by date and time, keeping the feed organized.
+
+Search/Filtering: I implemented the optional search requirement, allowing users to filter the schedule dynamically by typing in a room name or date.
+
+5. What you would verify before shipping to production:
+
+Race Conditions: On the frontend, if two users hit "Confirm Booking" for the same room at the exact same millisecond, the UI can't prevent both from going through. Before shipping, I would verify that the backend database has strict unique constraints to lock the time block.
+
+Timezone Normalization: Currently, the app relies on the user's local browser time. I would ensure all times are converted to UTC before being sent to the server to prevent conflicts between remote teams in different timezones.
+
+Past-Date Validation: I would add a strict check to prevent users from booking rooms on dates or times that have already passed.
+
+6. What you would improve if given 2 more days:
+
+Backend Integration: Given my familiarity with full-stack development, I would connect this React frontend to a robust Node.js/Express backend with a MongoDB database so that bookings persist across sessions.
+
+Visual Calendar View: I would upgrade the right-side feed from a list format into a visual weekly grid (similar to Google Calendar), making it easier for users to spot open time slots visually.
+
+User Authentication & Permissions: I would add a login system so bookings are tied to specific users, allowing them to edit or cancel only the meetings they created.
