@@ -278,3 +278,18 @@ input:focus, select:focus {
   margin: 0;
   font-size: 0.95rem;
 }
+
+/* --- Highlighting Styles --- */
+.schedule-item--active {
+  border-color: #93c5fd;
+  background: linear-gradient(90deg, #eff6ff 0%, #ffffff 18%);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12), 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.inline-highlight {
+  background-color: #fde68a;
+  color: #1e293b;
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-weight: 700;
+}

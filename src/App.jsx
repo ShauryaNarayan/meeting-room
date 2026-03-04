@@ -7,8 +7,28 @@ const formatTo12Hour = (time24) => {
   const [hourStr, minute] = time24.split(':');
   let hour = parseInt(hourStr, 10);
   const ampm = hour >= 12 ? 'PM' : 'AM';
-  hour = hour % 12 || 12; // Converts "0" hours to "12"
+  hour = hour % 12 || 12; 
   return `${hour}:${minute} ${ampm}`;
+};
+
+// Helper function to highlight matching text
+const highlightText = (text, highlight) => {
+  if (!highlight.trim()) {
+    return text;
+  }
+  const regex = new RegExp(`(${highlight})`, 'gi');
+  const parts = text.split(regex);
+  return (
+    <span>
+      {parts.map((part, i) => 
+        regex.test(part) ? (
+          <span key={i} className="inline-highlight">{part}</span>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </span>
+  );
 };
 
 const App = () => {
@@ -145,24 +165,30 @@ const App = () => {
             </div>
           ) : (
             <div className="schedule-list">
-              {filteredBookings.map((b) => (
-                <div key={b.id} className="schedule-item">
-                  <div className="room-badge">
-                    <span className="dot"></span>
-                    {b.room}
-                  </div>
-                  <div className="schedule-details">
-                    <div className="detail-row">
-                      <strong>Date:</strong> {b.date}
+              {filteredBookings.map((b) => {
+                // Determine if this item should have the active background
+                const isActive = searchTerm.length > 0;
+                
+                return (
+                  <div key={b.id} className={`schedule-item ${isActive ? 'schedule-item--active' : ''}`}>
+                    <div className="room-badge">
+                      <span className="dot"></span>
+                      {/* Apply inline highlighting to the room name */}
+                      {highlightText(b.room, searchTerm)}
                     </div>
-                    <div className="detail-row">
-                      {/* Applying the helper function here! */}
-                      <strong>Time:</strong> {formatTo12Hour(b.startTime)} - {formatTo12Hour(b.endTime)}
+                    <div className="schedule-details">
+                      <div className="detail-row">
+                        {/* Apply inline highlighting to the date */}
+                        <strong>Date:</strong> {highlightText(b.date, searchTerm)}
+                      </div>
+                      <div className="detail-row">
+                        <strong>Time:</strong> {formatTo12Hour(b.startTime)} - {formatTo12Hour(b.endTime)}
+                      </div>
                     </div>
+                    <div className="status-badge">Confirmed</div>
                   </div>
-                  <div className="status-badge">Confirmed</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
